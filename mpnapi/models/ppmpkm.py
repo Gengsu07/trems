@@ -30,6 +30,9 @@ class ppmpkm_base(SQLModel):
     nama_ar: str
     ntpn: str = Field(index=True)
 
+    def to_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class ppmpkm(ppmpkm_base, table=True):
     pass

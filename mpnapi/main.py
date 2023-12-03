@@ -1,10 +1,7 @@
-from typing import List
+from fastapi import FastAPI
 
-from fastapi import Depends, FastAPI, Query
-from sqlmodel import Session, select
-
-from mpnapi.database.db import create_db_and_tables, get_db
-from mpnapi.models.ppmpkm import ppmpkm, ppmpkm_base
+from mpnapi.database.db import create_db_and_tables
+from mpnapi.routers.kpi_api import router as mpnrouter
 
 app = FastAPI()
 
@@ -14,12 +11,4 @@ def on_startup():
     create_db_and_tables()
 
 
-@app.get("/", response_model=List[ppmpkm_base])
-def get_ppmpkm(
-    *,
-    session: Session = Depends(get_db),
-    offset: int = 0,
-    limit: int = Query(default=100, le=100)
-):
-    data = session.exec(select(ppmpkm).offset(offset).limit(limit)).all()
-    return data
+app.include_router(mpnrouter)
